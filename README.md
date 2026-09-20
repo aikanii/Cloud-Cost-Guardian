@@ -834,8 +834,7 @@ client/src/lib/          API client, formatters, contexts
 
 ## License
 
-<<<<<<< Updated upstream
+Updated upstream
 MIT © Cloud Cost Guardian contributors
 =======
 MIT
->>>>>>> Stashed changes
