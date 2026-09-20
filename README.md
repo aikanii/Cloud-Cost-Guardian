@@ -459,7 +459,6 @@ The engine is structured so heavier models can be dropped in without touching th
 
 ## 7. Security considerations
 
-> The current build is intended to run **inside a trusted network** (single-tenant, behind a VPN or reverse proxy). It ships without authentication so it can be evaluated instantly. The list below documents what *is* in place and what you must add before internet exposure.
 
 ### Implemented
 | Area | Measure |
@@ -647,8 +646,6 @@ Then deploy with your platform of choice — Fly.io / Render / Railway (single c
 
 ## 11. Screenshots
 
-> Place captures in `docs/screenshots/` using the filenames below and they will render here. Capture at 1440 × 900 in the default dark theme.
-
 | | |
 |---|---|
 | **Dashboard**: KPIs, spend by service/provider, budgets, alerts, top savings<br/>![Dashboard](docs/screenshots/dashboard.png) | **Cost Explorer**: group by any dimension, stacked/line, sortable breakdown<br/>![Explorer](docs/screenshots/explorer.png) |
@@ -794,12 +791,10 @@ All endpoints are under `/api`. Cost endpoints accept the filters `start`, `end`
 | `GET /governance/tags` | Tag compliance |
 | `GET/PUT /settings` | Required tags etc. |
 | `POST /admin/reseed` | Regenerate demo data |
->>>>>>> Stashed changes
 
 ## Project layout
 
 ```
-<<<<<<< Updated upstream
 .
 ├── .github/workflows/ci.yml     CI pipeline
 ├── Dockerfile                   Multi-stage production image
