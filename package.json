@@ -1,0 +1,22 @@
+{
+  "name": "cloud-cost-guardian",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Multi-cloud FinOps dashboard: cost visibility, budgets, anomaly detection, forecasting and savings recommendations for AWS, Azure and GCP.",
+  "workspaces": ["server", "client"],
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "dev": "concurrently -k -n api,web -c blue,green \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "npm start --prefix server",
+    "seed": "npm run seed --prefix server",
+    "test": "npm test --prefix server",
+    "lint": "npm run lint --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": { "node": ">=22.5" }
+}
