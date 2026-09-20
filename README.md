@@ -646,7 +646,7 @@ Then deploy with your platform of choice — Fly.io / Render / Railway (single c
 
 ## 11. Screenshots
 
-> Place captures in `docs/screenshots/` using the filenames below and they will render here. Capture at 1440 × 900 in the default dark theme.
+Captured headlessly at 1440 × 900 (1.5× DPR) from the seeded demo dataset in the default dark theme. Regenerate with `node scripts/screenshots.mjs` while the dev servers are running.
 
 | | |
 |---|---|

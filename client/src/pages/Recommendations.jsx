@@ -3,14 +3,16 @@ import { api, useApi, fmtMoney } from '../lib/api.js';
 import { Card, Kpi, Loading, ErrorState, Badge, Empty, ProviderBadge, PageHeader } from '../components/ui.jsx';
 import { useGlobalFilters, useToast } from '../lib/context.js';
 
+const I = (d, color) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>;
 const TYPE_META = {
-  idle: { icon: '💤', label: 'Idle resource', bg: 'rgba(248,113,113,.15)' },
-  unused: { icon: '🗑', label: 'Unused', bg: 'rgba(251,191,36,.15)' },
-  rightsize: { icon: '📐', label: 'Rightsizing', bg: 'rgba(96,165,250,.15)' },
-  commitment: { icon: '📜', label: 'Commitment', bg: 'rgba(168,85,247,.15)' },
-  storage: { icon: '🗄', label: 'Storage tiering', bg: 'rgba(52,211,153,.15)' },
-  governance: { icon: '🏷', label: 'Governance', bg: 'rgba(148,163,184,.15)' },
+  idle: { label: 'Idle resource', bg: 'rgba(248,113,113,.15)', color: '#f87171', d: 'M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.4A5.5 5.5 0 0 1 13.4 3.1 9 9 0 0 0 12 3z' },
+  unused: { label: 'Unused', bg: 'rgba(251,191,36,.15)', color: '#fbbf24', d: 'M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14M10 11v6M14 11v6' },
+  rightsize: { label: 'Rightsizing', bg: 'rgba(96,165,250,.15)', color: '#60a5fa', d: 'M4 20 20 4M4 20v-6M4 20h6M20 4v6M20 4h-6' },
+  commitment: { label: 'Commitment', bg: 'rgba(168,85,247,.15)', color: '#a78bfa', d: 'M6 3h9l4 4v14H6zM15 3v4h4M9 12h6M9 16h6' },
+  storage: { label: 'Storage tiering', bg: 'rgba(52,211,153,.15)', color: '#34d399', d: 'M4 6a8 3 0 0 0 16 0 8 3 0 0 0-16 0zM4 6v6a8 3 0 0 0 16 0V6M4 12v6a8 3 0 0 0 16 0v-6' },
+  governance: { label: 'Governance', bg: 'rgba(148,163,184,.15)', color: '#94a3b8', d: 'M3 12V4h8l10 10-8 8zM7 8h.01' },
 };
+for (const m of Object.values(TYPE_META)) m.icon = I(m.d, m.color);
 
 export default function Recommendations() {
   const recs = useApi('/recommendations?all=true');
