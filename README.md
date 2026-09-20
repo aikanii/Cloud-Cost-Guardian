@@ -2,7 +2,7 @@
 
 # ☁️ Cloud Cost Guardian
 
-**Self-hosted multi-cloud FinOps platform — visibility, guardrails and optimisation for AWS, Azure and GCP spend.**
+**Self-hosted multi-cloud FinOps platform: visibility, guardrails and optimisation for AWS, Azure and GCP spend.**
 
 [![CI](https://github.com/aikanii/Cloud-Cost-Guardian/actions/workflows/ci.yml/badge.svg)](https://github.com/aikanii/Cloud-Cost-Guardian/actions/workflows/ci.yml)
 ![Node](https://img.shields.io/badge/node-%E2%89%A5%2022.5-339933?logo=node.js&logoColor=white)
@@ -33,7 +33,7 @@
 
 ## 1. Architecture diagram
 
-Cloud Cost Guardian is a two-tier application: a React single-page app talks to a stateless Express API which owns an embedded SQLite database. There are **no native dependencies** — SQLite is provided by Node's built-in `node:sqlite` module — so the whole stack installs with `npm` and ships as a single container.
+Cloud Cost Guardian is a two-tier application: a React single-page app talks to a stateless Express API which owns an embedded SQLite database. There are **no native dependencies**: SQLite is provided by Node's built-in `node:sqlite` module: so the whole stack installs with `npm` and ships as a single container.
 
 ```mermaid
 flowchart LR
@@ -159,28 +159,28 @@ Every API request flows through: `cors` → `express.json()` → route handler (
 ## 3. Feature list
 
 ### Visibility
-- **Executive dashboard** — month-to-date, forecast month-end, 7-day and 30-day spend with period-over-period deltas; spend by provider (donut), daily spend by service (stacked area), top services, budget health, open alerts, top savings.
-- **Cost Explorer** — group daily spend by `service · account · provider · region · team · env · cost-center`; stacked-bar or multi-line view; top-N + "Other" bucketing; sortable breakdown table with share bars; 7/30/60/90-day ranges; CSV export of the exact filtered slice.
-- **Global filters** — provider and account filters apply across every page.
-- **Resource inventory** — every resource with 30-day cost, CPU utilisation, tags, status and a per-resource cost sparkline; inline tag/status editing.
+- **Executive dashboard**: month-to-date, forecast month-end, 7-day and 30-day spend with period-over-period deltas; spend by provider (donut), daily spend by service (stacked area), top services, budget health, open alerts, top savings.
+- **Cost Explorer**: group daily spend by `service · account · provider · region · team · env · cost-center`; stacked-bar or multi-line view; top-N + "Other" bucketing; sortable breakdown table with share bars; 7/30/60/90-day ranges; CSV export of the exact filtered slice.
+- **Global filters**: provider and account filters apply across every page.
+- **Resource inventory**: every resource with 30-day cost, CPU utilisation, tags, status and a per-resource cost sparkline; inline tag/status editing.
 
 ### Prediction & detection
-- **Forecasting** — OLS trend over 60 days, 80 % confidence band that widens with horizon, month-end and next-N-day projections (14/30/60/90).
-- **Anomaly detection** — rolling 21-day baseline per (account, service); flags spikes with z > 3, > 40 % increase and > $25 delta; severity tiering.
+- **Forecasting**: OLS trend over 60 days, 80 % confidence band that widens with horizon, month-end and next-N-day projections (14/30/60/90).
+- **Anomaly detection**: rolling 21-day baseline per (account, service); flags spikes with z > 3, > 40 % increase and > $25 delta; severity tiering.
 
 ### Guardrails
-- **Budgets** — monthly / quarterly / yearly; scoped to all spend, an account, a service or a tag; configurable threshold; live status `ok → at-risk → warning → exceeded` with run-rate projection.
-- **Alerts** — budget threshold, budget forecast-overrun and anomaly alerts; acknowledge / resolve / reopen; evaluated on boot, every 15 minutes, and on demand; sidebar badge with live count.
+- **Budgets**: monthly / quarterly / yearly; scoped to all spend, an account, a service or a tag; configurable threshold; live status `ok → at-risk → warning → exceeded` with run-rate projection.
+- **Alerts**: budget threshold, budget forecast-overrun and anomaly alerts; acknowledge / resolve / reopen; evaluated on boot, every 15 minutes, and on demand; sidebar badge with live count.
 
 ### Optimisation
-- **Savings recommendations** — six rule families with monthly-savings estimate, effort and risk:
+- **Savings recommendations**: six rule families with monthly-savings estimate, effort and risk:
   idle compute · unattached volumes · rightsizing · commitment discounts (Savings Plans / CUDs / RIs) · storage lifecycle tiering · missing owner tags.
   Track each as *applied* or *dismissed*; realised-savings KPI.
-- **Tag governance** — configurable required-tag policy; compliance % and cost-coverage %; ranked violation list.
+- **Tag governance**: configurable required-tag policy; compliance % and cost-coverage %; ranked violation list.
 
 ### Platform
 - Multi-account, multi-provider (AWS, Azure, GCP) model with normalised ingest API.
-- Deterministic demo dataset (4 accounts, ~86 resources, 120 days) — every feature works out of the box.
+- Deterministic demo dataset (4 accounts, ~86 resources, 120 days): every feature works out of the box.
 - Animated glassmorphic dark UI with light-mode toggle; `prefers-reduced-motion` respected.
 - Single-process production mode (API serves built SPA), Dockerfile, CI pipeline.
 
@@ -217,9 +217,9 @@ Accepted by every `/costs/*` endpoint:
 #### Accounts
 | Method | Path | Body / Query | Description |
 |--------|------|--------------|-------------|
-| `GET` | `/accounts` | — | Accounts with resource count and 30-day cost |
+| `GET` | `/accounts` |: | Accounts with resource count and 30-day cost |
 | `POST` | `/accounts` | `{ name, provider, external_id, currency? }` | Connect an account (`provider` ∈ aws/azure/gcp) |
-| `DELETE` | `/accounts/:id` | — | Remove account and cascade its data |
+| `DELETE` | `/accounts/:id` |: | Remove account and cascade its data |
 
 #### Costs
 | Method | Path | Query | Description |
@@ -229,7 +229,7 @@ Accepted by every `/costs/*` endpoint:
 | `GET` | `/costs/breakdown` | filters + `groupBy` | `[{ key, cost }]` sorted desc. `groupBy` ∈ `service, region, account, provider, team, env, cost-center` |
 | `GET` | `/costs/daily-breakdown` | filters + `groupBy` + `limit` | `{ keys: [...top N, "Other"], series: [{ date, <key>: cost }] }` |
 | `GET` | `/costs/forecast` | filters + `horizon` (≤ 90) | `{ history, projections[{date, forecast, low, high}], trendPerDay, dailyRunRate, projectedMonthEnd, monthToDate, projectedNext30Days }` |
-| `GET` | `/costs/filters` | — | Distinct services, regions, providers, accounts and tag values for UI selectors |
+| `GET` | `/costs/filters` |: | Distinct services, regions, providers, accounts and tag values for UI selectors |
 | `GET` | `/costs/export` | filters + `format=csv\|json` | Raw entries; CSV sent as an attachment |
 | `POST` | `/costs/ingest` | array of entries | Bulk insert in one transaction |
 
@@ -263,10 +263,10 @@ Response `201 { "ingested": 1 }`. Any invalid row aborts the whole batch with `4
 #### Budgets
 | Method | Path | Body | Description |
 |--------|------|------|-------------|
-| `GET` | `/budgets` | — | Budgets enriched with `spent, remaining, pctUsed, projected, projectedPct, status, periodStart, periodEnd, scopeLabel` |
+| `GET` | `/budgets` |: | Budgets enriched with `spent, remaining, pctUsed, projected, projectedPct, status, periodStart, periodEnd, scopeLabel` |
 | `POST` | `/budgets` | `{ name, amount, period?, scope_type?, scope_value?, threshold_pct? }` | Create; triggers alert evaluation |
 | `PUT` | `/budgets/:id` | partial body | Update |
-| `DELETE` | `/budgets/:id` | — | Delete budget and its alerts |
+| `DELETE` | `/budgets/:id` |: | Delete budget and its alerts |
 
 `period` ∈ `monthly | quarterly | yearly` · `scope_type` ∈ `all | account | service | tag` (tag value must be `key=value`) · `threshold_pct` 1–100.
 
@@ -275,14 +275,14 @@ Response `201 { "ingested": 1 }`. Any invalid row aborts the whole batch with `4
 |--------|------|--------------|-------------|
 | `GET` | `/alerts` | `status, type` | Sorted by severity then recency; `metadata` is parsed JSON |
 | `PATCH` | `/alerts/:id` | `{ status }` | `open` \| `acknowledged` \| `resolved` |
-| `POST` | `/alerts/evaluate` | — | Run evaluation now → `{ created, total }` |
+| `POST` | `/alerts/evaluate` |: | Run evaluation now → `{ created, total }` |
 | `GET` | `/anomalies` | `lookback, z` | Raw detector output (no persistence) |
 
 #### Recommendations & governance
 | Method | Path | Query | Description |
 |--------|------|-------|-------------|
 | `GET` | `/recommendations` | `all=true` to include handled | Sorted by monthly savings |
-| `POST` | `/recommendations/:fingerprint/:action` | — | `action` ∈ `applied` \| `dismissed` \| `open` |
+| `POST` | `/recommendations/:fingerprint/:action` |: | `action` ∈ `applied` \| `dismissed` \| `open` |
 | `GET` | `/governance/tags` | `required=env,team` (optional override) | Compliance report with violations |
 
 <details>
@@ -397,7 +397,7 @@ erDiagram
 | `alerts.fingerprint UNIQUE` | Makes alert evaluation idempotent (`INSERT … ON CONFLICT DO UPDATE`) |
 | `ON DELETE CASCADE` | Removing an account removes its resources and cost lines |
 
-Recommendations are **not persisted** — they are recomputed from live data on each request; only user decisions (`applied` / `dismissed`) are stored, keyed by a deterministic fingerprint such as `rightsize|42` or `commit|1|EC2`.
+Recommendations are **not persisted**: they are recomputed from live data on each request; only user decisions (`applied` / `dismissed`) are stored, keyed by a deterministic fingerprint such as `rightsize|42` or `commit|1|EC2`.
 
 ---
 
@@ -441,7 +441,7 @@ flowchart TB
 
 | Model | Method | Why this approach |
 |-------|--------|-------------------|
-| **Forecast** | Ordinary least squares on the last 60 daily totals; 80 % interval from residual σ, widened by `√(1 + h/n)` as horizon `h` grows. Month-end = actual MTD + Σ projected remaining days. | Cloud spend is dominated by slow drift plus weekly noise; a linear trend with an honest error band is more robust and more explainable than seasonal models on short histories. Filter-aware — forecast any provider/account slice. |
+| **Forecast** | Ordinary least squares on the last 60 daily totals; 80 % interval from residual σ, widened by `√(1 + h/n)` as horizon `h` grows. Month-end = actual MTD + Σ projected remaining days. | Cloud spend is dominated by slow drift plus weekly noise; a linear trend with an honest error band is more robust and more explainable than seasonal models on short histories. Filter-aware: forecast any provider/account slice. |
 | **Anomaly detection** | For each (account, service) series, compare each of the last 14 days to the mean/σ of the preceding 21 days. Three gates must all pass: statistical (z > 3), relative (> 40 %), absolute (> $25). Severity `critical` when > 150 % increase. | Multi-gate scoring suppresses false positives on tiny services (absolute gate) and on noisy-but-flat services (relative gate) while still catching the ~3–4× spikes typical of runaway jobs. |
 | **Recommendations** | Deterministic rules engine over utilisation and spend patterns, each producing `monthlySavings`, `effort`, `risk`, and a stable `fingerprint`. Savings coefficients (e.g. 45 % for one-tier rightsizing, 70 % coverage × 28 % discount for commitments, 20 % for storage tiering) mirror published provider guidance. | FinOps teams need to defend every recommendation; rules with visible assumptions are auditable and tunable. |
 | **Budget status** | Linear run-rate projection over the period; four-state machine `ok / at-risk / warning / exceeded`. | Simple, matches how AWS Budgets / Azure Cost alerts behave, so expectations transfer. |
@@ -450,9 +450,9 @@ flowchart TB
 
 The engine is structured so heavier models can be dropped in without touching the API or UI:
 
-- **Forecasting** — replace `linearRegression()` in `util.js` with Holt-Winters or Prophet-style seasonal decomposition; the `forecast()` contract (`history`, `projections[{date, forecast, low, high}]`) stays the same.
-- **Anomalies** — `detectAnomalies()` returns a plain array; swap the z-score core for an isolation forest or seasonal ESD and keep the alert fingerprinting.
-- **Natural-language insights** — the `summary()`, `recommendations()` and `detectAnomalies()` outputs are compact JSON suitable as LLM context for a "why did spend change?" assistant; add a route that streams a model response over these structured facts, keeping the model out of the hot path.
+- **Forecasting**: replace `linearRegression()` in `util.js` with Holt-Winters or Prophet-style seasonal decomposition; the `forecast()` contract (`history`, `projections[{date, forecast, low, high}]`) stays the same.
+- **Anomalies**: `detectAnomalies()` returns a plain array; swap the z-score core for an isolation forest or seasonal ESD and keep the alert fingerprinting.
+- **Natural-language insights**: the `summary()`, `recommendations()` and `detectAnomalies()` outputs are compact JSON suitable as LLM context for a "why did spend change?" assistant; add a route that streams a model response over these structured facts, keeping the model out of the hot path.
 
 ---
 
@@ -468,18 +468,18 @@ The engine is structured so heavier models can be dropped in without touching th
 | **Error handling** | Central error middleware; stack traces logged server-side only, clients get `{ error }`. |
 | **CSV export** | Cells containing `"`, `,` or newlines are quoted/escaped (RFC 4180). |
 | **Referential integrity** | Foreign keys enabled; cascades prevent orphaned cost lines. |
-| **Secrets** | None stored — the app never holds cloud credentials; billing data is pushed *to* it. |
+| **Secrets** | None stored: the app never holds cloud credentials; billing data is pushed *to* it. |
 | **Supply chain** | Two runtime dependencies (`express`, `cors`); lockfiles committed; CI builds from `npm ci`. |
 | **Container** | Multi-stage image, `NODE_ENV=production`, dev dependencies excluded, data on a dedicated volume. |
 
 ### Required before public exposure
-- **Authentication & authorisation** — put the API behind an identity-aware proxy (OAuth2 Proxy, Cloudflare Access, Pomerium) or add JWT/session middleware in `app.js`. Restrict `POST /admin/reseed`, `DELETE /accounts/:id` and `PUT /settings` to admins.
-- **CORS** — `cors()` is currently open; pin `origin` to your UI hostname.
-- **TLS** — terminate HTTPS at the proxy; set `trust proxy` if you log client IPs.
-- **Rate limiting** — add `express-rate-limit` on `/costs/ingest` and `/alerts/evaluate`.
-- **Security headers** — add `helmet` (CSP, HSTS, no-sniff).
-- **Audit trail** — alert/recommendation state changes are timestamped; extend with a user column once auth exists.
-- **Backups** — the SQLite file (`DB_PATH`) plus its `-wal` file constitute the full state; snapshot the volume or use `sqlite3 .backup`.
+- **Authentication & authorisation**: put the API behind an identity-aware proxy (OAuth2 Proxy, Cloudflare Access, Pomerium) or add JWT/session middleware in `app.js`. Restrict `POST /admin/reseed`, `DELETE /accounts/:id` and `PUT /settings` to admins.
+- **CORS**: `cors()` is currently open; pin `origin` to your UI hostname.
+- **TLS**: terminate HTTPS at the proxy; set `trust proxy` if you log client IPs.
+- **Rate limiting**: add `express-rate-limit` on `/costs/ingest` and `/alerts/evaluate`.
+- **Security headers**: add `helmet` (CSP, HSTS, no-sniff).
+- **Audit trail**: alert/recommendation state changes are timestamped; extend with a user column once auth exists.
+- **Backups**: the SQLite file (`DB_PATH`) plus its `-wal` file constitute the full state; snapshot the volume or use `sqlite3 .backup`.
 
 Report vulnerabilities privately via GitHub Security Advisories on this repository.
 
@@ -633,12 +633,12 @@ The workflow stops at a verified image. Typical next steps:
     tags: ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.sha }}
 ```
 
-Then deploy with your platform of choice — Fly.io / Render / Railway (single container + volume), ECS/Fargate with EFS, or Kubernetes with a `PersistentVolumeClaim` for `/data`.
+Then deploy with your platform of choice: Fly.io / Render / Railway (single container + volume), ECS/Fargate with EFS, or Kubernetes with a `PersistentVolumeClaim` for `/data`.
 
 ### Branch conventions
 
-- `main` — protected; requires green CI.
-- `arena/**`, `feat/**`, `fix/**` — working branches; PR into `main`.
+- `main`: protected; requires green CI.
+- `arena/**`, `feat/**`, `fix/**`: working branches; PR into `main`.
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `chore:`, `docs:`).
 
 ---
@@ -667,17 +667,17 @@ npm run install:all      # server + client deps
 npm run dev              # API :4000 · UI :5173 (proxies /api)
 ```
 
-Open **http://localhost:5173**. On first start the API creates the database and seeds a realistic 120-day, 4-account demo dataset, then evaluates alerts — you land on a populated dashboard with live budgets, ~8 open alerts and ~$24k/month of savings opportunities.
+Open **http://localhost:5173**. On first start the API creates the database and seeds a realistic 120-day, 4-account demo dataset, then evaluates alerts: you land on a populated dashboard with live budgets, ~8 open alerts and ~$24k/month of savings opportunities.
 
 ### Guided tour
 
-1. **Dashboard** — note the *Forecast month end* KPI and the pulsing alert badge in the sidebar.
-2. **Alerts** — three anomaly alerts correspond to spikes seeded in EC2 (AWS prod), BigQuery (GCP) and Virtual Machines (Azure). Acknowledge one, then click *Re-evaluate alerts* — it stays acknowledged.
-3. **Forecast** — switch the global provider filter to **GCP** and the horizon to **90d**; the projection and band recalculate for that slice.
-4. **Budgets** — create a budget scoped to `tag = team=data` with a 60 % threshold; a warning alert appears immediately.
-5. **Savings** — filter to *Commitment*; mark one *Applied* and watch the *Realized* KPI update.
-6. **Resources** — search `idle`-looking rows (CPU < 5 % shown in red), open one, add an `owner=` tag and save; **Governance** compliance moves.
-7. **Explorer** — group by *Team tag* over 90 days, switch to *Lines*, export the CSV.
+1. **Dashboard**: note the *Forecast month end* KPI and the pulsing alert badge in the sidebar.
+2. **Alerts**: three anomaly alerts correspond to spikes seeded in EC2 (AWS prod), BigQuery (GCP) and Virtual Machines (Azure). Acknowledge one, then click *Re-evaluate alerts*: it stays acknowledged.
+3. **Forecast**: switch the global provider filter to **GCP** and the horizon to **90d**; the projection and band recalculate for that slice.
+4. **Budgets**: create a budget scoped to `tag = team=data` with a 60 % threshold; a warning alert appears immediately.
+5. **Savings**: filter to *Commitment*; mark one *Applied* and watch the *Realized* KPI update.
+6. **Resources**: search `idle`-looking rows (CPU < 5 % shown in red), open one, add an `owner=` tag and save; **Governance** compliance moves.
+7. **Explorer**: group by *Team tag* over 90 days, switch to *Lines*, export the CSV.
 8. **Settings** → *Regenerate demo data* resets everything.
 
 ### Feed it real data
