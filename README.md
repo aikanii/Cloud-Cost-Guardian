@@ -97,7 +97,6 @@ flowchart LR
 ### 2.1 Data ingestion → insight
 
 ```mermaid
-```mermaid
 sequenceDiagram
     autonumber
     participant X as Billing export / script
@@ -115,7 +114,7 @@ sequenceDiagram
         API->>ENG: evaluateAlerts()
         ENG->>DB: SELECT budgets, cost rollups
         ENG->>ENG: budgetStatus() · detectAnomalies()
-        ENG->>DB: UPSERT alerts by fingerprint (never reopens handled alerts)
+        ENG->>DB: UPSERT alerts by fingerprint
     end
 
     UI->>API: GET /api/costs/summary?provider=aws
