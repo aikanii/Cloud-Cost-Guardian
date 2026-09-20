@@ -651,10 +651,10 @@ Then deploy with your platform of choice — Fly.io / Render / Railway (single c
 
 | | |
 |---|---|
-| **Dashboard** — KPIs, spend by service/provider, budgets, alerts, top savings<br/>![Dashboard](docs/screenshots/dashboard.png) | **Cost Explorer** — group by any dimension, stacked/line, sortable breakdown<br/>![Explorer](docs/screenshots/explorer.png) |
-| **Forecast** — OLS trend with 80 % band and month-end projection<br/>![Forecast](docs/screenshots/forecast.png) | **Budgets** — scoped budgets with thresholds and run-rate status<br/>![Budgets](docs/screenshots/budgets.png) |
-| **Alerts** — lifecycle management + anomaly detector table<br/>![Alerts](docs/screenshots/alerts.png) | **Savings** — ranked recommendations with $/effort/risk<br/>![Savings](docs/screenshots/savings.png) |
-| **Resources** — inventory, utilisation, inline tag editing<br/>![Resources](docs/screenshots/resources.png) | **Governance** — tag compliance and violations<br/>![Governance](docs/screenshots/governance.png) |
+| **Dashboard**: KPIs, spend by service/provider, budgets, alerts, top savings<br/>![Dashboard](docs/screenshots/dashboard.png) | **Cost Explorer**: group by any dimension, stacked/line, sortable breakdown<br/>![Explorer](docs/screenshots/explorer.png) |
+| **Forecast**: OLS trend with 80 % band and month-end projection<br/>![Forecast](docs/screenshots/forecast.png) | **Budgets**: scoped budgets with thresholds and run-rate status<br/>![Budgets](docs/screenshots/budgets.png) |
+| **Alerts**: lifecycle management + anomaly detector table<br/>![Alerts](docs/screenshots/alerts.png) | **Savings**: ranked recommendations with $/effort/risk<br/>![Savings](docs/screenshots/savings.png) |
+| **Resources**: inventory, utilisation, inline tag editing<br/>![Resources](docs/screenshots/resources.png) | **Governance**: tag compliance and violations<br/>![Governance](docs/screenshots/governance.png) |
 
 ---
 
