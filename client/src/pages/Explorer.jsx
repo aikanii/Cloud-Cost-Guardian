@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RTooltip, Legend } from 'recharts';
 import { useApi, qs, fmtMoney, fmtMoney2, fmtCompact, fmtDate, PALETTE } from '../lib/api.js';
-import { Card, Loading, ErrorState, Tooltip } from '../components/ui.jsx';
+import { Card, Loading, ErrorState, Tooltip, PageHeader } from '../components/ui.jsx';
 import { useGlobalFilters } from '../lib/context.js';
 
 const GROUPS = [['service', 'Service'], ['account', 'Account'], ['provider', 'Provider'], ['region', 'Region'], ['team', 'Team tag'], ['env', 'Env tag'], ['cost-center', 'Cost center']];
@@ -34,10 +34,9 @@ export default function Explorer() {
 
   return (
     <div className="stack">
-      <div className="page-header">
-        <div><h1>Cost Explorer</h1><p className="muted">Slice and dice spend by any dimension</p></div>
+      <PageHeader eyebrow="Analytics" title="Cost Explorer" subtitle={<>Slice and dice spend by any dimension</>}>
         <a className="btn" href={`/api/costs/export${qs(params)}`}>⬇ Export CSV</a>
-      </div>
+      </PageHeader>
 
       <div className="toolbar">
         <div className="segmented">{RANGES.map(([d, l]) => <button key={d} className={days === d ? 'active' : ''} onClick={() => setDays(d)}>{l}</button>)}</div>
@@ -57,7 +56,7 @@ export default function Explorer() {
       </div>
 
       <Card title={`Daily cost by ${GROUPS.find((g) => g[0] === groupBy)[1].toLowerCase()}`} subtitle={`${fmtMoney(total)} total · ${fmtMoney(total / days)} per day average`}>
-        {daily.loading ? <Loading /> : daily.error ? <ErrorState error={daily.error} onRetry={daily.refetch} /> : (
+        {daily.loading ? <Loading chart /> : daily.error ? <ErrorState error={daily.error} onRetry={daily.refetch} /> : (
           <ResponsiveContainer width="100%" height={360}>
             <ChartCmp data={daily.data.series} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -66,8 +65,8 @@ export default function Explorer() {
               <RTooltip content={<Tooltip />} labelFormatter={fmtDate} cursor={{ fill: 'var(--bg)' }} />
               <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12 }} />
               {daily.data.keys.map((k, i) => chart === 'line'
-                ? <Line key={k} type="monotone" dataKey={k} stroke={PALETTE[i % PALETTE.length]} dot={false} strokeWidth={2} />
-                : <Bar key={k} dataKey={k} stackId="a" fill={PALETTE[i % PALETTE.length]} radius={i === daily.data.keys.length - 1 ? [3, 3, 0, 0] : 0} />)}
+                ? <Line key={k} type="monotone" dataKey={k} stroke={PALETTE[i % PALETTE.length]} dot={false} strokeWidth={2} animationDuration={1000} />
+                : <Bar key={k} dataKey={k} stackId="a" fill={PALETTE[i % PALETTE.length]} radius={i === daily.data.keys.length - 1 ? [3, 3, 0, 0] : 0} animationDuration={1000} />)}
             </ChartCmp>
           </ResponsiveContainer>
         )}

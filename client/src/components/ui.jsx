@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PROVIDER_LABEL, PROVIDER_COLOR } from '../lib/api.js';
 
 export function Card({ title, subtitle, actions, children, className = '' }) {
@@ -18,7 +18,35 @@ export function Card({ title, subtitle, actions, children, className = '' }) {
   );
 }
 
-export function Kpi({ label, value, delta, deltaLabel, hint, tone, invert = false }) {
+/** Animates a numeric value from 0 → target; returns the current frame value. */
+export function useCountUp(target, duration = 900) {
+  const [val, setVal] = useState(0);
+  const from = useRef(0);
+  useEffect(() => {
+    const start = performance.now();
+    const begin = from.current;
+    const end = Number(target) || 0;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setVal(end); from.current = end; return; }
+    let raf;
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setVal(begin + (end - begin) * eased);
+      if (t < 1) raf = requestAnimationFrame(tick); else from.current = end;
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration]);
+  return val;
+}
+
+/** Renders `format(animatedNumber)` — pass a raw number and a formatter. */
+export function AnimatedNumber({ value, format = (v) => v }) {
+  const v = useCountUp(value);
+  return <>{format(v)}</>;
+}
+
+export function Kpi({ label, value, delta, deltaLabel, hint, tone, invert = false, raw, format }) {
   let cls = 'neutral';
   if (delta != null) {
     const good = invert ? delta > 0 : delta < 0;
@@ -27,7 +55,7 @@ export function Kpi({ label, value, delta, deltaLabel, hint, tone, invert = fals
   return (
     <div className={`kpi ${tone || ''}`}>
       <div className="kpi-label">{label}</div>
-      <div className="kpi-value">{value}</div>
+      <div className="kpi-value">{raw != null ? <AnimatedNumber value={raw} format={format} /> : value}</div>
       {(delta != null || hint) && (
         <div className="kpi-foot">
           {delta != null && <span className={`delta ${cls}`}>{delta > 0 ? '▲' : delta < 0 ? '▼' : '•'} {Math.abs(delta).toFixed(1)}%</span>}
@@ -51,8 +79,26 @@ export function ProviderBadge({ provider }) {
 }
 
 
-export function Loading({ label = 'Loading…' }) {
+export function Loading({ label = 'Loading…', chart = false, rows = 4 }) {
+  if (chart) return <div className="skeleton chart" aria-label={label}><span /></div>;
+  return <div className="skeleton" aria-label={label}>{Array.from({ length: rows }).map((_, i) => <span key={i} />)}</div>;
+}
+
+export function Spinner({ label = 'Loading…' }) {
   return <div className="state"><span className="spinner" /> {label}</div>;
+}
+
+export function PageHeader({ eyebrow, title, subtitle, children }) {
+  return (
+    <div className="page-header">
+      <div>
+        {eyebrow && <div className="eyebrow">{eyebrow}</div>}
+        <h1>{title}</h1>
+        {subtitle && <p className="muted">{subtitle}</p>}
+      </div>
+      {children && <div className="row">{children}</div>}
+    </div>
+  );
 }
 
 export function ErrorState({ error, onRetry }) {

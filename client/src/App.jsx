@@ -39,7 +39,7 @@ function useHashRoute() {
 export default function App() {
   const path = useHashRoute();
   const [toast, setToast] = useState(null);
-  const [theme, setTheme] = useState(() => localStorage.getItem('ccg-theme') || 'light');
+  const [theme, setTheme] = useState(() => localStorage.getItem('ccg-theme') || 'dark');
   const [filters, setFilters] = useState({ provider: '', accountId: '' });
   const showToast = useCallback((message, type = 'ok') => {
     setToast({ message, type });
@@ -61,11 +61,12 @@ export default function App() {
   return (
     <ToastCtx.Provider value={showToast}>
       <FilterCtx.Provider value={filterValue}>
+        <div className="backdrop" aria-hidden="true"><div className="orb a" /><div className="orb b" /><div className="orb c" /></div>
         <div className="layout">
           <aside className="sidebar">
             <a className="brand" href="#/">
-              <svg viewBox="0 0 32 32"><path d="M16 2 4 7v8c0 7 5 13 12 15 7-2 12-8 12-15V7z" fill="#2563eb" /><path d="M11 17l3 3 7-8" stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              Cost Guardian
+              <svg viewBox="0 0 32 32"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#22d3ee" /><stop offset="1" stopColor="#6366f1" /></linearGradient></defs><path d="M16 2 4 7v8c0 7 5 13 12 15 7-2 12-8 12-15V7z" fill="url(#g)" /><path d="M11 17l3 3 7-8" stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <span>Cost Guardian<small>FinOps Console</small></span>
             </a>
             {ROUTES.map((r) => (
               <a key={r.path} href={`#${r.path}`} className={`nav-link ${route.path === r.path ? 'active' : ''}`}>
@@ -74,15 +75,15 @@ export default function App() {
               </a>
             ))}
             <div className="sidebar-foot">
-              <button className="btn btn-sm btn-ghost" style={{ color: '#aab4c5', justifyContent: 'flex-start' }} onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-                {theme === 'light' ? '☾ Dark mode' : '☀ Light mode'}
+              <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Toggle theme">
+                {theme === 'light' ? '☀ Light' : '☾ Dark'} <span className="knob" />
               </button>
-              <span>Multi-cloud FinOps · v1.0</span>
+              <div className="status-line"><span className="live" /> API connected · v1.0</div>
             </div>
           </aside>
           <main className="main">
             <GlobalFilterBar />
-            <Page key={route.path} />
+            <div className="page" key={route.path}><Page /></div>
           </main>
         </div>
         {toast && <div className={`toast ${toast.type === 'error' ? 'error' : ''}`}>{toast.message}</div>}
@@ -104,7 +105,8 @@ function GlobalFilterBar() {
     finally { setRefreshing(false); }
   };
   return (
-    <div className="toolbar" style={{ marginBottom: 20 }}>
+    <div className="toolbar" style={{ marginBottom: 22 }}>
+      <span className="ticker"><span className="live" /> LIVE</span>
       <select value={filters.provider} onChange={(e) => setFilters({ provider: e.target.value, accountId: '' })} aria-label="Provider">
         <option value="">All providers</option>
         {(options?.providers || []).map((p) => <option key={p} value={p}>{p.toUpperCase()}</option>)}
@@ -115,7 +117,7 @@ function GlobalFilterBar() {
       </select>
       {active.length > 0 && <button className="btn btn-sm btn-ghost" onClick={() => setFilters({ provider: '', accountId: '' })}>Clear filters</button>}
       <span className="grow" />
-      <button className="btn btn-sm" onClick={evaluate} disabled={refreshing}>{refreshing ? 'Evaluating…' : '↻ Re-evaluate alerts'}</button>
+      <button className="btn btn-sm" onClick={evaluate} disabled={refreshing}>{refreshing ? <><span className="spinner" style={{ width: 12, height: 12 }} /> Evaluating…</> : '↻ Re-evaluate alerts'}</button>
     </div>
   );
 }

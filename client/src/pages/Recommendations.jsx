@@ -1,15 +1,15 @@
 import { useMemo, useState } from 'react';
 import { api, useApi, fmtMoney } from '../lib/api.js';
-import { Card, Kpi, Loading, ErrorState, Badge, Empty, ProviderBadge } from '../components/ui.jsx';
+import { Card, Kpi, Loading, ErrorState, Badge, Empty, ProviderBadge, PageHeader } from '../components/ui.jsx';
 import { useGlobalFilters, useToast } from '../lib/context.js';
 
 const TYPE_META = {
-  idle: { icon: '💤', label: 'Idle resource', bg: '#fee2e2' },
-  unused: { icon: '🗑', label: 'Unused', bg: '#fef3c7' },
-  rightsize: { icon: '📐', label: 'Rightsizing', bg: '#dbeafe' },
-  commitment: { icon: '📜', label: 'Commitment', bg: '#ede9fe' },
-  storage: { icon: '🗄', label: 'Storage tiering', bg: '#d1fae5' },
-  governance: { icon: '🏷', label: 'Governance', bg: '#f1f5f9' },
+  idle: { icon: '💤', label: 'Idle resource', bg: 'rgba(248,113,113,.15)' },
+  unused: { icon: '🗑', label: 'Unused', bg: 'rgba(251,191,36,.15)' },
+  rightsize: { icon: '📐', label: 'Rightsizing', bg: 'rgba(96,165,250,.15)' },
+  commitment: { icon: '📜', label: 'Commitment', bg: 'rgba(168,85,247,.15)' },
+  storage: { icon: '🗄', label: 'Storage tiering', bg: 'rgba(52,211,153,.15)' },
+  governance: { icon: '🏷', label: 'Governance', bg: 'rgba(148,163,184,.15)' },
 };
 
 export default function Recommendations() {
@@ -36,13 +36,11 @@ export default function Recommendations() {
 
   return (
     <div className="stack">
-      <div className="page-header">
-        <div><h1>Savings recommendations</h1><p className="muted">Actionable optimizations across compute, storage, commitments and governance</p></div>
-      </div>
+      <PageHeader eyebrow="Optimization" title="Savings recommendations" subtitle={<>Actionable optimizations across compute, storage, commitments and governance</>} />
       <div className="grid grid-4">
-        <Kpi label="Open opportunities" value={open.length} />
-        <Kpi label="Potential monthly savings" value={fmtMoney(totalSavings)} tone="accent" />
-        <Kpi label="Annualized" value={fmtMoney(totalSavings * 12)} />
+        <Kpi label="Open opportunities" raw={open.length} format={(v) => Math.round(v)} />
+        <Kpi label="Potential monthly savings" raw={totalSavings} format={fmtMoney} tone="accent" />
+        <Kpi label="Annualized" raw={totalSavings * 12} format={fmtMoney} />
         <Kpi label="Realized (applied)" value={`${fmtMoney(applied)}/mo`} />
       </div>
 

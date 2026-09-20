@@ -1,5 +1,5 @@
 import { useApi, fmtMoney } from '../lib/api.js';
-import { Card, Kpi, Loading, ErrorState, Badge, Empty, ProviderBadge, Progress } from '../components/ui.jsx';
+import { Card, Kpi, Loading, ErrorState, Badge, Empty, ProviderBadge, Progress, PageHeader } from '../components/ui.jsx';
 
 export default function Governance() {
   const g = useApi('/governance/tags');
@@ -9,14 +9,12 @@ export default function Governance() {
   const tone = d.compliancePct >= 90 ? 'green' : d.compliancePct >= 70 ? 'amber' : 'red';
   return (
     <div className="stack">
-      <div className="page-header">
-        <div><h1>Tag governance</h1><p className="muted">Required tags: {d.requiredTags.map((t) => <span key={t} className="tag">{t}</span>)} <a href="#/settings" className="small">change</a></p></div>
-      </div>
+      <PageHeader eyebrow="Compliance" title="Tag governance" subtitle={<>Required tags: {d.requiredTags.map((t) => <span key={t} className="tag">{t}</span>)} <a href="#/settings" className="small">change</a></>} />
       <div className="grid grid-4">
-        <Kpi label="Resource compliance" value={`${d.compliancePct}%`} hint={`${d.compliantResources} of ${d.totalResources} resources fully tagged`} />
-        <Kpi label="Cost coverage" value={`${d.costCoveragePct}%`} hint="share of 30d spend that is fully attributable" />
+        <Kpi label="Resource compliance" raw={d.compliancePct} format={(v) => `${v.toFixed(1)}%`} hint={`${d.compliantResources} of ${d.totalResources} resources fully tagged`} />
+        <Kpi label="Cost coverage" raw={d.costCoveragePct} format={(v) => `${v.toFixed(1)}%`} hint="share of 30d spend that is fully attributable" />
         <Kpi label="Violations" value={d.violations.length} />
-        <Kpi label="Unattributed spend" value={fmtMoney(d.violations.reduce((s, v) => s + v.monthlyCost, 0))} hint="per month" />
+        <Kpi label="Unattributed spend" raw={d.violations.reduce((s, v) => s + v.monthlyCost, 0)} format={fmtMoney} hint="per month" />
       </div>
       <Card title="Compliance"><Progress pct={d.compliancePct} tone={tone} /><p className="muted small" style={{ marginTop: 6 }}>Target ≥ 90%</p></Card>
       <Card title="Violations" subtitle="Resources missing one or more required tags, most expensive first">

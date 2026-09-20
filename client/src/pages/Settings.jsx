@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api, useApi } from '../lib/api.js';
-import { Card, Loading, ErrorState, Field } from '../components/ui.jsx';
+import { Card, Loading, ErrorState, Field, PageHeader } from '../components/ui.jsx';
 import { useToast } from '../lib/context.js';
 
 export default function Settings() {
@@ -31,7 +31,7 @@ function SettingsView({ settings, health, toast, busy, reseed }) {
   };
   return (
     <div className="stack">
-      <div className="page-header"><div><h1>Settings</h1><p className="muted">Governance policy and data management</p></div></div>
+      <PageHeader eyebrow="Configuration" title="Settings" subtitle={<>Governance policy and data management</>} />
       <div className="grid grid-2">
         <Card title="Tag policy">
           <form onSubmit={save} className="stack" style={{ gap: 12 }}>

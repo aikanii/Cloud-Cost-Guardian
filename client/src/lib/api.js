@@ -53,8 +53,8 @@ export const fmtCompact = (n) => {
 export const fmtDate = (s) => new Date(s + (s.length === 10 ? 'T00:00:00Z' : '')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 
 export const PROVIDER_LABEL = { aws: 'AWS', gcp: 'GCP', azure: 'Azure' };
-export const PROVIDER_COLOR = { aws: '#f59e0b', gcp: '#3b82f6', azure: '#0ea5e9' };
-export const PALETTE = ['#2563eb', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444', '#06b6d4', '#ec4899', '#84cc16', '#94a3b8'];
+export const PROVIDER_COLOR = { aws: '#fbbf24', gcp: '#818cf8', azure: '#22d3ee' };
+export const PALETTE = ['#22d3ee', '#818cf8', '#34d399', '#fbbf24', '#f472b6', '#a78bfa', '#fb7185', '#a3e635', '#94a3b8'];
 
 export const SEVERITY_TONE = { critical: 'red', warning: 'amber', info: 'blue' };
 export const STATUS_TONE = { ok: 'green', 'at-risk': 'blue', warning: 'amber', exceeded: 'red', open: 'red', acknowledged: 'amber', resolved: 'green' };

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api, useApi, qs, fmtMoney, SEVERITY_TONE, STATUS_TONE } from '../lib/api.js';
-import { Card, Loading, ErrorState, Badge, Empty } from '../components/ui.jsx';
+import { Card, Loading, ErrorState, Badge, Empty, PageHeader } from '../components/ui.jsx';
 import { useToast } from '../lib/context.js';
 
 export default function Alerts() {
@@ -17,9 +17,7 @@ export default function Alerts() {
 
   return (
     <div className="stack">
-      <div className="page-header">
-        <div><h1>Alerts</h1><p className="muted">Budget thresholds, forecasts and anomaly detections</p></div>
-      </div>
+      <PageHeader eyebrow="Signals" title="Alerts" subtitle={<>Budget thresholds, forecasts and anomaly detections</>} />
       <div className="toolbar">
         <div className="segmented">{[['open', 'Open'], ['acknowledged', 'Acknowledged'], ['resolved', 'Resolved'], ['', 'All']].map(([v, l]) => <button key={v} className={status === v ? 'active' : ''} onClick={() => setStatus(v)}>{l}</button>)}</div>
         <select value={type} onChange={(e) => setType(e.target.value)}><option value="">All types</option><option value="budget">Budget</option><option value="forecast">Forecast</option><option value="anomaly">Anomaly</option></select>

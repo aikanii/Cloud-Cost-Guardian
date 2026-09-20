@@ -1,6 +1,6 @@
 import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RTooltip, Legend } from 'recharts';
 import { useApi, qs, fmtMoney, fmtCompact, fmtDate, PALETTE, PROVIDER_COLOR, PROVIDER_LABEL, SEVERITY_TONE, STATUS_TONE } from '../lib/api.js';
-import { Card, Kpi, Loading, ErrorState, Badge, Tooltip, Progress, Empty } from '../components/ui.jsx';
+import { Card, Kpi, Loading, ErrorState, Badge, Tooltip, Progress, Empty, PageHeader } from '../components/ui.jsx';
 import { useGlobalFilters } from '../lib/context.js';
 
 export default function Dashboard() {
@@ -19,31 +19,31 @@ export default function Dashboard() {
 
   return (
     <div className="stack">
-      <div className="page-header">
-        <div><h1>Overview</h1><p className="muted">Multi-cloud spend at a glance · as of {s ? fmtDate(s.asOf) : '…'}</p></div>
+      <PageHeader eyebrow="Command center" title="Overview" subtitle={<>Multi-cloud spend at a glance · as of {s ? fmtDate(s.asOf) : '…'}</>}>
         <a className="btn" href={`/api/costs/export${f}`}>⬇ Export CSV (30d)</a>
-      </div>
+      </PageHeader>
 
-      {!s ? <Loading /> : (
+      {!s ? <div className="grid grid-4">{[0,1,2,3].map((i) => <div key={i} className="kpi"><Loading rows={3} /></div>)}</div> : (
         <div className="grid grid-4">
-          <Kpi label="Month to date" value={fmtMoney(s.monthToDate)} delta={s.monthToDateChangePct} deltaLabel="vs same period last month" />
-          <Kpi label="Forecast month end" value={fmtMoney(s.forecastMonthEnd)} delta={s.forecastChangePct} deltaLabel={`vs last month (${fmtMoney(s.prevMonthTotal)})`} />
-          <Kpi label="Last 7 days" value={fmtMoney(s.last7Days)} delta={s.last7ChangePct} deltaLabel="vs prior 7 days" />
-          <Kpi label="Potential savings" value={`${fmtMoney(s.potentialSavings)}/mo`} hint={`${s.openAlerts} open alert${s.openAlerts === 1 ? '' : 's'}`} tone="accent" />
+          <Kpi label="Month to date" raw={s.monthToDate} format={fmtMoney} delta={s.monthToDateChangePct} deltaLabel="vs same period last month" />
+          <Kpi label="Forecast month end" raw={s.forecastMonthEnd} format={fmtMoney} delta={s.forecastChangePct} deltaLabel={`vs last month (${fmtMoney(s.prevMonthTotal)})`} />
+          <Kpi label="Last 7 days" raw={s.last7Days} format={fmtMoney} delta={s.last7ChangePct} deltaLabel="vs prior 7 days" />
+          <Kpi label="Potential savings" raw={s.potentialSavings} format={(v) => `${fmtMoney(v)}/mo`} hint={`${s.openAlerts} open alert${s.openAlerts === 1 ? '' : 's'}`} tone="accent" />
         </div>
       )}
 
       <div className="grid grid-3">
         <Card className="span-2" title="Daily spend by service" subtitle="Last 30 days, top 5 services">
-          {daily.loading ? <Loading /> : daily.error ? <ErrorState error={daily.error} /> : (
+          {daily.loading ? <Loading chart /> : daily.error ? <ErrorState error={daily.error} /> : (
             <ResponsiveContainer width="100%" height={280}>
               <AreaChart data={daily.data.series} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+                <defs>{daily.data.keys.map((k, i) => <linearGradient key={k} id={`g-${i}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={PALETTE[i % PALETTE.length]} stopOpacity={0.85} /><stop offset="100%" stopColor={PALETTE[i % PALETTE.length]} stopOpacity={0.25} /></linearGradient>)}</defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                 <XAxis dataKey="date" tickFormatter={fmtDate} tick={{ fontSize: 11, fill: 'var(--muted)' }} minTickGap={30} />
                 <YAxis tickFormatter={fmtCompact} tick={{ fontSize: 11, fill: 'var(--muted)' }} width={56} />
                 <RTooltip content={<Tooltip />} labelFormatter={fmtDate} />
                 {daily.data.keys.map((k, i) => (
-                  <Area key={k} type="monotone" dataKey={k} stackId="1" stroke={PALETTE[i % PALETTE.length]} fill={PALETTE[i % PALETTE.length]} fillOpacity={0.75} />
+                  <Area key={k} type="monotone" dataKey={k} stackId="1" stroke={PALETTE[i % PALETTE.length]} fill={`url(#g-${i})`} strokeWidth={1.5} animationDuration={1200} />
                 ))}
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12 }} />
               </AreaChart>
@@ -51,11 +51,11 @@ export default function Dashboard() {
           )}
         </Card>
         <Card title="Spend by provider" subtitle="Last 30 days">
-          {byProvider.loading ? <Loading /> : (
+          {byProvider.loading ? <Loading chart /> : (
             <>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
-                  <Pie data={byProvider.data} dataKey="cost" nameKey="key" innerRadius={55} outerRadius={85} paddingAngle={2}>
+                  <Pie data={byProvider.data} cornerRadius={4} dataKey="cost" nameKey="key" innerRadius={55} outerRadius={85} paddingAngle={3} stroke="none" animationDuration={1200}>
                     {byProvider.data.map((d) => <Cell key={d.key} fill={PROVIDER_COLOR[d.key] || '#94a3b8'} />)}
                   </Pie>
                   <RTooltip content={<Tooltip />} />
@@ -79,13 +79,14 @@ export default function Dashboard() {
 
       <div className="grid grid-3">
         <Card title="Top services" subtitle="Last 30 days" actions={<a className="btn btn-sm" href="#/explorer">Explore →</a>}>
-          {byService.loading ? <Loading /> : (
+          {byService.loading ? <Loading chart /> : (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={byService.data.slice(0, 8)} layout="vertical" margin={{ left: 10, right: 20 }}>
+                <defs><linearGradient id="bar-g" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="var(--primary-2)" /><stop offset="100%" stopColor="var(--primary)" /></linearGradient></defs>
                 <XAxis type="number" tickFormatter={fmtCompact} tick={{ fontSize: 11, fill: 'var(--muted)' }} />
                 <YAxis type="category" dataKey="key" width={100} tick={{ fontSize: 11, fill: 'var(--text)' }} />
                 <RTooltip content={<Tooltip />} cursor={{ fill: 'var(--bg)' }} />
-                <Bar dataKey="cost" name="Cost" fill="var(--primary)" radius={[0, 6, 6, 0]} />
+                <Bar dataKey="cost" name="Cost" fill="url(#bar-g)" radius={[0, 6, 6, 0]} animationDuration={1000} />
               </BarChart>
             </ResponsiveContainer>
           )}

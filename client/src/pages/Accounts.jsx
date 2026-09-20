@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api, useApi, fmtMoney } from '../lib/api.js';
-import { Card, Loading, ErrorState, ProviderBadge, Modal, Field, Empty } from '../components/ui.jsx';
+import { Card, Loading, ErrorState, ProviderBadge, Modal, Field, Empty, PageHeader } from '../components/ui.jsx';
 import { useToast } from '../lib/context.js';
 
 const EMPTY = { name: '', provider: 'aws', external_id: '' };
@@ -28,10 +28,9 @@ export default function Accounts() {
 
   return (
     <div className="stack">
-      <div className="page-header">
-        <div><h1>Cloud accounts</h1><p className="muted">{accounts.data?.length || 0} connected · {fmtMoney(total)} in the last 30 days</p></div>
+      <PageHeader eyebrow="Connections" title="Cloud accounts" subtitle={<>{accounts.data?.length || 0} connected · {fmtMoney(total)} in the last 30 days</>}>
         <button className="btn btn-primary" onClick={() => setForm({ ...EMPTY })}>+ Connect account</button>
-      </div>
+      </PageHeader>
       <Card>
         {accounts.loading ? <Loading /> : accounts.error ? <ErrorState error={accounts.error} onRetry={accounts.refetch} /> : accounts.data.length === 0 ? <Empty>No accounts connected.</Empty> : (
           <div className="table-wrap">

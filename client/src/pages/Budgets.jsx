@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api, useApi, fmtMoney, STATUS_TONE } from '../lib/api.js';
-import { Card, Loading, ErrorState, Badge, Progress, Modal, Field, Empty } from '../components/ui.jsx';
+import { Card, Loading, ErrorState, Badge, Progress, Modal, Field, Empty , PageHeader, AnimatedNumber} from '../components/ui.jsx';
 import { useGlobalFilters, useToast } from '../lib/context.js';
 
 const EMPTY = { name: '', amount: '', period: 'monthly', scope_type: 'all', scope_value: '', threshold_pct: 80 };
@@ -34,10 +34,9 @@ export default function Budgets() {
 
   return (
     <div className="stack">
-      <div className="page-header">
-        <div><h1>Budgets</h1><p className="muted">{list.length} budgets · {totals.exceeded} exceeded · {totals.warning} at threshold · {totals.atRisk} forecast to exceed</p></div>
+      <PageHeader eyebrow="Guardrails" title="Budgets" subtitle={<>{list.length} budgets · {totals.exceeded} exceeded · {totals.warning} at threshold · {totals.atRisk} forecast to exceed</>}>
         <button className="btn btn-primary" onClick={() => setEditing({ ...EMPTY })}>+ New budget</button>
-      </div>
+      </PageHeader>
 
       {budgets.loading ? <Loading /> : budgets.error ? <ErrorState error={budgets.error} onRetry={budgets.refetch} /> : list.length === 0 ? (
         <Card><Empty>No budgets yet. Create one to start tracking spend against targets.</Empty></Card>
@@ -46,7 +45,7 @@ export default function Budgets() {
           {list.map((b) => (
             <Card key={b.id} title={b.name} subtitle={`${b.scopeLabel} · ${b.period} · ${b.periodStart} → ${b.periodEnd}`}
               actions={<><Badge tone={STATUS_TONE[b.status]}>{b.status}</Badge><button className="btn btn-sm" onClick={() => setEditing({ ...b })}>Edit</button><button className="btn btn-sm btn-danger" onClick={() => remove(b)}>Delete</button></>}>
-              <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 6 }}>{fmtMoney(b.spent)} <span className="muted" style={{ fontSize: 14, fontWeight: 500 }}>of {fmtMoney(b.amount)}</span></div>
+              <div className="hero-stat" style={{ marginBottom: 8 }}><AnimatedNumber value={b.spent} format={fmtMoney} /> <span className="muted" style={{ fontSize: 14, fontWeight: 500 }}>of {fmtMoney(b.amount)}</span></div>
               <Progress pct={b.pctUsed} tone={STATUS_TONE[b.status]} marker={b.threshold_pct} />
               <div className="grid grid-3" style={{ marginTop: 14, gap: 8 }}>
                 <Stat label="Used" value={`${b.pctUsed}%`} />

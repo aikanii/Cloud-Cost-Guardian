@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip as RTooltip } from 'recharts';
 import { api, useApi, qs, fmtMoney, fmtCompact, fmtDate } from '../lib/api.js';
-import { Card, Loading, ErrorState, Badge, Empty, ProviderBadge, Modal, Field, Tooltip } from '../components/ui.jsx';
+import { Card, Loading, ErrorState, Badge, Empty, ProviderBadge, Modal, Field, Tooltip, PageHeader } from '../components/ui.jsx';
 import { useGlobalFilters, useToast } from '../lib/context.js';
 
 export default function Resources() {
@@ -29,9 +29,7 @@ export default function Resources() {
 
   return (
     <div className="stack">
-      <div className="page-header">
-        <div><h1>Resources</h1><p className="muted">{rows.length} resources · {fmtMoney(total)} over the last 30 days</p></div>
-      </div>
+      <PageHeader eyebrow="Inventory" title="Resources" subtitle={<>{rows.length} resources · {fmtMoney(total)} over the last 30 days</>} />
       <div className="toolbar">
         <input placeholder="Search name or ID…" value={search} onChange={(e) => setSearch(e.target.value)} style={{ minWidth: 240 }} />
         <select value={service} onChange={(e) => setService(e.target.value)}><option value="">All services</option>{(options?.services || []).map((s) => <option key={s}>{s}</option>)}</select>
