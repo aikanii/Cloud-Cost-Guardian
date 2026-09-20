@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 <div align="center">
 
 # ☁️ Cloud Cost Guardian
